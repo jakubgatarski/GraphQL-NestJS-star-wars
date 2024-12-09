@@ -1,0 +1,17 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type FilmType {
+  title: String!
+  episode_id: Float!
+  opening_crawl: String!
+  director: String!
+  producer: String!
+  release_date: String!
+}
+
+type Query {
+  films(page: Int, filter: String): [FilmType!]!
+  film(id: Int!): FilmType!
+}
