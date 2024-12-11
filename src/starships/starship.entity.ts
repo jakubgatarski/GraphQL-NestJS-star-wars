@@ -1,7 +1,7 @@
 import { Entity, Column } from 'typeorm';
 
-@Entity('vehicles')
-export class Vehicles {
+@Entity('starships')
+export class Starship {
     @Column('text')
     name: string;
 
