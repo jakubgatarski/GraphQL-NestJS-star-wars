@@ -6,6 +6,7 @@ import { FilmsModule } from './films/films.module';
 import { CacheModule } from './cache/cache.module';
 import { SpeciesModule } from './species/species.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
+import { StarshipsModule } from './starships/starships.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
         CacheModule,
         SpeciesModule,
         VehiclesModule,
+        StarshipsModule,
     ],
     controllers: [],
     providers: [],
