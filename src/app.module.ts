@@ -5,6 +5,7 @@ import { join } from 'path';
 import { FilmsModule } from './films/films.module';
 import { CacheModule } from './cache/cache.module';
 import { SpeciesModule } from './species/species.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { SpeciesModule } from './species/species.module';
         FilmsModule,
         CacheModule,
         SpeciesModule,
+        VehiclesModule,
     ],
     controllers: [],
     providers: [],

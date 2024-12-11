@@ -24,9 +24,25 @@ type SpeciesType {
   language: String!
 }
 
+type VehicleType {
+  name: String!
+  model: String!
+  manufacturer: String!
+  cost_in_credits: Float!
+  length: Float!
+  max_atmosphering_speed: Float!
+  crew: Float!
+  passengers: Float!
+  cargo_capacity: Float!
+  consumables: String!
+  vehicle_class: String!
+}
+
 type Query {
   films(page: Int, filter: String): [FilmType!]!
   film(id: Int!): FilmType!
   species(page: Int, filter: String): [SpeciesType!]!
   speciesById(id: Int!): SpeciesType!
+  vehicles(page: Int, filter: String): [VehicleType!]!
+  vehicle(id: Int!): VehicleType!
 }
