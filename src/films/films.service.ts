@@ -43,4 +43,45 @@ export class FilmsService extends BaseService {
         const response = await axios.get(url);
         return response.data;
     }
+
+    async analyzeOpeningCrawl(): Promise<{
+        wordCounts: Record<string, number>;
+        mostMentionedCharacters: string[];
+    }> {
+        const films = await this.fetchAndCache<any[]>(this.endpoint, 'films');
+
+        const allText = films.map((film) => film.opening_crawl).join(' ');
+
+        const words = allText
+            .replace(/[\r\n]+/g, ' ')
+            .split(/\s+/)
+            .map((word) => word.toLowerCase().replace(/[^a-z0-9]/gi, ''))
+            .filter((word) => word.length > 0);
+
+        const wordCounts: Record<string, number> = {};
+        for (const word of words) {
+            wordCounts[word] = (wordCounts[word] || 0) + 1;
+        }
+
+        const charactersResponse = await axios.get(`${SWAPI_BASE_URL}/people`);
+        const characters = charactersResponse.data.results.map((character) => character.name.toLowerCase());
+
+        const characterMentions: Record<string, number> = {};
+        for (const char of characters) {
+            const charCount = (allText.match(new RegExp(`\\b${char}\\b`, 'gi')) || []).length;
+            if (charCount > 0) {
+                characterMentions[char] = charCount;
+            }
+        }
+
+        const maxMentions = Math.max(...Object.values(characterMentions));
+        const mostMentionedCharacters = Object.keys(characterMentions).filter(
+            (char) => characterMentions[char] === maxMentions,
+        );
+
+        return {
+            wordCounts,
+            mostMentionedCharacters,
+        };
+    }
 }

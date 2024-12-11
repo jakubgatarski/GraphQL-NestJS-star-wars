@@ -11,6 +11,16 @@ type FilmType {
   release_date: String!
 }
 
+type WordCount {
+  word: String!
+  count: Float!
+}
+
+type AnalyzeOpeningCrawlResult {
+  wordCounts: [WordCount!]!
+  mostMentionedCharacters: [String!]!
+}
+
 type SpeciesType {
   name: String!
   classification: String!
@@ -69,6 +79,7 @@ type PlanetType {
 type Query {
   films(page: Int, filter: String): [FilmType!]!
   film(id: Int!): FilmType!
+  analyzeOpeningCrawl: AnalyzeOpeningCrawlResult!
   species(page: Int, filter: String): [SpeciesType!]!
   speciesById(id: Int!): SpeciesType!
   vehicles(page: Int, filter: String): [VehicleType!]!

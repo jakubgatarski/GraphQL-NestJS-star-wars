@@ -1,6 +1,7 @@
 import { Resolver, Query, Args, Int } from '@nestjs/graphql';
 import { FilmsService } from './films.service';
 import { FilmType } from './film.type';
+import { AnalyzeOpeningCrawlResult } from './film-analize.type';
 
 @Resolver(() => FilmType)
 export class FilmsResolver {
@@ -17,5 +18,14 @@ export class FilmsResolver {
     @Query(() => FilmType, { name: 'film' })
     async getFilmById(@Args('id', { type: () => Int }) id: number): Promise<FilmType> {
         return this.filmsService.getFilmById(id);
+    }
+
+    @Query(() => AnalyzeOpeningCrawlResult)
+    async analyzeOpeningCrawl(): Promise<AnalyzeOpeningCrawlResult> {
+        const analysis = await this.filmsService.analyzeOpeningCrawl();
+        return {
+            wordCounts: Object.entries(analysis.wordCounts).map(([word, count]) => ({ word, count })),
+            mostMentionedCharacters: analysis.mostMentionedCharacters,
+        };
     }
 }
