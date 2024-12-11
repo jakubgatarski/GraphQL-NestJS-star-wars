@@ -4,6 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { FilmsModule } from './films/films.module';
 import { CacheModule } from './cache/cache.module';
+import { SpeciesModule } from './species/species.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { CacheModule } from './cache/cache.module';
         }),
         FilmsModule,
         CacheModule,
+        SpeciesModule,
     ],
     controllers: [],
     providers: [],

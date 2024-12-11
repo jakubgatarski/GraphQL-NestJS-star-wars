@@ -11,7 +11,22 @@ type FilmType {
   release_date: String!
 }
 
+type SpeciesType {
+  name: String!
+  classification: String!
+  designation: String!
+  average_height: String!
+  skin_colors: String!
+  hair_colors: String!
+  eye_colors: String!
+  average_lifespan: Float!
+  homeworld: String!
+  language: String!
+}
+
 type Query {
   films(page: Int, filter: String): [FilmType!]!
   film(id: Int!): FilmType!
+  species(page: Int, filter: String): [SpeciesType!]!
+  speciesById(id: Int!): SpeciesType!
 }
