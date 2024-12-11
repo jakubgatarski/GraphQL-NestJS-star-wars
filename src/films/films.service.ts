@@ -3,7 +3,7 @@ import axios from 'axios';
 import { SWAPI_BASE_URL } from 'src/app.consts';
 import { CacheService } from 'src/cache/cache.service';
 import { BaseService } from 'src/common/base.service';
-import { Film } from './film.type';
+import { FilmItem } from './film.type';
 
 @Injectable()
 export class FilmsService extends BaseService {
@@ -13,15 +13,15 @@ export class FilmsService extends BaseService {
         super(cacheService);
     }
 
-    async getAllFilms(page?: number, filter?: string): Promise<Film[]> {
-        const data: Film[] = await this.fetchAndCache<Film[]>(this.endpoint, 'films');
-        const filteredData = this.applyFilter<Film>(data, filter);
-        return this.applyPagination<Film>(filteredData, page);
+    async getAllFilms(page?: number, filter?: string): Promise<FilmItem[]> {
+        const data: FilmItem[] = await this.fetchAndCache<FilmItem[]>(this.endpoint, 'films');
+        const filteredData = this.applyFilter<FilmItem>(data, filter);
+        return this.applyPagination<FilmItem>(filteredData, page);
     }
 
-    async getFilmById(id: number): Promise<Film> {
+    async getFilmById(id: number): Promise<FilmItem> {
         const cacheKey = `film:${id}`;
-        const cachedFilm = await this.cacheService.get<Film>(cacheKey);
+        const cachedFilm = await this.cacheService.get<FilmItem>(cacheKey);
 
         if (cachedFilm) {
             console.log(`Cache hit for film ID ${id}`);
@@ -29,7 +29,7 @@ export class FilmsService extends BaseService {
         }
 
         console.log(`Cache miss for film ID ${id}`);
-        const response: Film = await this.fetchFromApiById<Film>(id);
+        const response: FilmItem = await this.fetchFromApiById<FilmItem>(id);
         await this.cacheService.set(cacheKey, response);
         return response;
     }

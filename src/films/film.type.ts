@@ -22,7 +22,7 @@ export class FilmType {
 
 }
 
-export interface Film {
+export interface FilmItem {
     title: string;
     episode_id: number;
     opening_crawl: string;
