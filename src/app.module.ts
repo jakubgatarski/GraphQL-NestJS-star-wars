@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { FilmsModule } from './films/films.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { FilmsModule } from './films/films.module';
             playground: true,
         }),
         FilmsModule,
+        CacheModule,
     ],
     controllers: [],
     providers: [],
