@@ -2,10 +2,10 @@ import { Entity, Column } from 'typeorm';
 
 @Entity('films')
 export class Film {
-    @Column()
+    @Column('text')
     title: string;
 
-    @Column()
+    @Column('int')
     episode_id: number;
 
     @Column('text')
@@ -17,6 +17,6 @@ export class Film {
     @Column('text')
     producer: string;
 
-    @Column()
+    @Column('text')
     release_date: string;
 }

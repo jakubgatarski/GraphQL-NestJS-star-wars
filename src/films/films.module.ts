@@ -4,7 +4,7 @@ import { FilmsResolver } from './films.resolver';
 import { CacheModule } from 'src/cache/cache.module';
 
 @Module({
-  imports: [CacheModule],
-  providers: [FilmsService, FilmsResolver],
+    imports: [CacheModule],
+    providers: [FilmsService, FilmsResolver],
 })
-export class FilmsModule {}
+export class FilmsModule { }
