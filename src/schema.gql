@@ -54,6 +54,18 @@ type StarshipType {
   starship_class: String!
 }
 
+type PlanetType {
+  name: String!
+  rotation_period: Float!
+  orbital_period: Float!
+  diameter: Float!
+  climate: String!
+  gravity: String!
+  terrain: String!
+  surface_water: String!
+  population: Float!
+}
+
 type Query {
   films(page: Int, filter: String): [FilmType!]!
   film(id: Int!): FilmType!
@@ -63,4 +75,6 @@ type Query {
   vehicle(id: Int!): VehicleType!
   starships(page: Int, filter: String): [StarshipType!]!
   starship(id: Int!): StarshipType!
+  planets(page: Int, filter: String): [PlanetType!]!
+  planet(id: Int!): PlanetType!
 }
