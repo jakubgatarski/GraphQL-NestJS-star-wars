@@ -1,39 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { SWAPI_BASE_URL } from 'src/app.consts';
 import { CacheService } from 'src/cache/cache.service';
 import { BaseService } from 'src/common/base.service';
 import { FilmItem } from './film.type';
 
+/**
+ * Service for managing films data fetched from the SWAPI API.
+ */
 @Injectable()
 export class FilmsService extends BaseService {
     private readonly endpoint = `${SWAPI_BASE_URL}/films`;
 
+    /**
+     * Constructor to inject dependencies.
+     * @param cacheService - The caching service to handle caching of API responses.
+     */
     constructor(cacheService: CacheService) {
         super(cacheService);
     }
 
+    /**
+     * Retrieves all films from the SWAPI API with optional pagination and filtering.
+     * The entire list of films is cached under a single key.
+     * @param page - (Optional) The page number for pagination.
+     * @param filter - (Optional) A keyword to filter the films.
+     * @returns A promise resolving to an array of film items.
+     */
     async getAllFilms(page?: number, filter?: string): Promise<FilmItem[]> {
         const cacheKey = 'films';
-        const cachedFilms = await this.cacheService.get<FilmItem[]>(cacheKey);
-    
-        if (cachedFilms) {
-            console.log(`Cache hit for key: ${cacheKey}`);
-            return this.applyPagination<FilmItem>(
-                this.applyFilter<FilmItem>(cachedFilms, filter),
-                page,
-            );
-        }
-    
-        console.log(`Cache miss for key: ${cacheKey}`);
         const data: FilmItem[] = await this.fetchAndCache<FilmItem[]>(this.endpoint, cacheKey);
-        await this.cacheService.set(cacheKey, data);
-        return this.applyPagination<FilmItem>(
-            this.applyFilter<FilmItem>(data, filter),
-            page,
-        );
+
+        const filteredData = this.applyFilter<FilmItem>(data, filter);
+        return this.applyPagination<FilmItem>(filteredData, page);
     }
 
+    /**
+     * Retrieves a single film by its ID.
+     * @param id - The ID of the film to retrieve.
+     * @returns A promise resolving to a film item.
+     */
     async getFilmById(id: number): Promise<FilmItem> {
         const cacheKey = `film:${id}`;
         const cachedFilm = await this.cacheService.get<FilmItem>(cacheKey);
@@ -44,26 +49,24 @@ export class FilmsService extends BaseService {
         }
 
         console.log(`Cache miss for film ID ${id}`);
-        const response: FilmItem = await this.fetchFromApiById<FilmItem>(id);
+        const response: FilmItem = await this.fetchFromApiById<FilmItem>(this.endpoint, id);
         await this.cacheService.set(cacheKey, response);
         return response;
     }
 
-    private async fetchFromApiById<T>(id: number): Promise<T> {
-        const url = `${this.endpoint}/${id}`;
-        return this.fetchFromApi<T>(url);
-    }
-
-    private async fetchFromApi<T>(url: string): Promise<T> {
-        const response = await axios.get(url);
-        return response.data;
-    }
-
+    /**
+     * Analyzes the opening crawl text of all films to compute:
+     * - Word frequency counts.
+     * - The most mentioned character(s) in the opening crawls.
+     * @returns A promise resolving to an object containing:
+     *   - `wordCounts`: A record of unique words and their occurrences.
+     *   - `mostMentionedCharacters`: An array of the most mentioned character names.
+     */
     async analyzeOpeningCrawl(): Promise<{
         wordCounts: Record<string, number>;
         mostMentionedCharacters: string[];
     }> {
-        const films = await this.fetchAndCache<any[]>(this.endpoint, 'films');
+        const films = await this.fetchAndCache<FilmItem[]>(this.endpoint, 'films');
 
         const allText = films.map((film) => film.opening_crawl).join(' ');
 
@@ -78,8 +81,9 @@ export class FilmsService extends BaseService {
             wordCounts[word] = (wordCounts[word] || 0) + 1;
         }
 
-        const charactersResponse = await axios.get(`${SWAPI_BASE_URL}/people`);
-        const characters = charactersResponse.data.results.map((character) => character.name.toLowerCase());
+        // Character mention analysis
+        const charactersResponse = await this.fetchFromApi<any>(`${SWAPI_BASE_URL}/people`);
+        const characters = charactersResponse.results.map((character: any) => character.name.toLowerCase());
 
         const characterMentions: Record<string, number> = {};
         for (const char of characters) {
