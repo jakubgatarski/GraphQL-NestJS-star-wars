@@ -14,9 +14,24 @@ export class FilmsService extends BaseService {
     }
 
     async getAllFilms(page?: number, filter?: string): Promise<FilmItem[]> {
-        const data: FilmItem[] = await this.fetchAndCache<FilmItem[]>(this.endpoint, 'films');
-        const filteredData = this.applyFilter<FilmItem>(data, filter);
-        return this.applyPagination<FilmItem>(filteredData, page);
+        const cacheKey = 'films';
+        const cachedFilms = await this.cacheService.get<FilmItem[]>(cacheKey);
+    
+        if (cachedFilms) {
+            console.log(`Cache hit for key: ${cacheKey}`);
+            return this.applyPagination<FilmItem>(
+                this.applyFilter<FilmItem>(cachedFilms, filter),
+                page,
+            );
+        }
+    
+        console.log(`Cache miss for key: ${cacheKey}`);
+        const data: FilmItem[] = await this.fetchAndCache<FilmItem[]>(this.endpoint, cacheKey);
+        await this.cacheService.set(cacheKey, data);
+        return this.applyPagination<FilmItem>(
+            this.applyFilter<FilmItem>(data, filter),
+            page,
+        );
     }
 
     async getFilmById(id: number): Promise<FilmItem> {
